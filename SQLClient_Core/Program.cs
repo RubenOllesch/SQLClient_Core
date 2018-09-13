@@ -7,9 +7,8 @@ namespace SQLClient
 {
     class Program
     {  
-		static string connString = "Server=tappqa;Database=Training-RE-CompanyDB;Integrated Security=true";
-        static SqlConnection connection = new SqlConnection(connString);
-        static string currentTable = "";
+		private static readonly string connString = "Server=tappqa;Database=Training-RE-CompanyDB;Integrated Security=true";
+        public static readonly SqlConnection connection = new SqlConnection(connString);
 
         public static void Main(string[] args)
         {
@@ -21,6 +20,7 @@ namespace SQLClient
             {
                 throw new Exception("Could not establish a connection");
             }
+            Controller controller = new Controller();
             while (true)
             {
                 string rawInput = Console.ReadLine();
@@ -28,55 +28,25 @@ namespace SQLClient
 
                 switch (arguments[0]) {
                     case "table":
-                        Table(arguments.Skip(1).ToArray());
+                        controller.Table(arguments.Skip(1).ToArray());
                         break;
                     case "create":
-                        Create(arguments.Skip(1).ToArray());
+                        controller.Create(arguments.Skip(1).ToArray());
                         break;
                     case "read":
+                        controller.Read(arguments.Skip(1).ToArray());
                         break;
                     case "update":
                         break;
                     case "delete":
                         break;
+                    default:
+                        break;
                 }
             }
 
         }
 
-        private static void Table(string[] args)
-        {
-            // No Table specified
-            if (args.Length < 1)
-            {
-                Console.WriteLine($"Current Table: {currentTable}");
-                return;
-            }
-            // Table specified
-            string table = args[0];
-            DataTable dt = connection.GetSchema("Tables");
-
-            // Check if specified Table exists
-            foreach (DataRow row in dt.Rows)
-            {
-                if ((string)row[2] == table)
-                {
-                    currentTable = table;
-                    return;
-                }
-            }
-            // Prints if Table was not found
-            Console.WriteLine("This Table does not exist");
-        }
-
-        private static void Create(string[] args)
-        {
-            if (currentTable == "")
-            {
-                Console.WriteLine("Please select a Table first");
-                return;
-            }
-            
-        }
+        
     }
 }
