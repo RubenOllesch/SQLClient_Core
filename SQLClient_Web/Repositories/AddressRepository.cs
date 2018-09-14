@@ -127,12 +127,12 @@ namespace SQLClient_Web.Repositories
 
                     cmd.Parameters.AddWithValue("@Id", Id);
                     SqlParameter result = new SqlParameter("returnValue", SqlDbType.Int);
-                    result.Direction = ParameterDirection.Output;
-                    cmd.Parameters.Add(result);
+                    
+                    cmd.Parameters.Add(result).Direction = result.Direction = System.Data.ParameterDirection.ReturnValue;
 
                     cmd.ExecuteNonQuery();
 
-                    return cmd.Parameters["returnValue"].Value != null;
+                    return cmd.Parameters["returnValue"].Value != DBNull.Value;
                 }
                 catch
                 {

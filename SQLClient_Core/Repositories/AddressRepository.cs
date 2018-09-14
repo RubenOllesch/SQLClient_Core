@@ -63,8 +63,10 @@ namespace SQLClient.Repositories
                 cache.Remove(element);
                 SqlCommand cmd = new SqlCommand("spDeleteAddress", Program.connection);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Id", Id);
+
+                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = Id;
                 var result = cmd.Parameters.Add("@ReturnVal", SqlDbType.Int);
+
                 cmd.ExecuteNonQuery();
                 return result.Value != null;
             }
