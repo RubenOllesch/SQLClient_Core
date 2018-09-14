@@ -36,8 +36,7 @@ namespace SQLClient_Web.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] string props)
         {
-            Address address = new Address();
-            MapPropsToAddress(address, props.Split(" "));
+            Address address = PropsToAddress(props.Split(" "));
             var result = repository.Create(address);
             return result > 0 ? (IActionResult)StatusCode(StatusCodes.Status201Created) : Ok(false);
         }
@@ -45,8 +44,7 @@ namespace SQLClient_Web.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] string props)
         {
-            Address address = new Address();
-            MapPropsToAddress(address, props.Split(" "));
+            Address address = PropsToAddress(props.Split(" "));
             var result = repository.Update(address);
             return Ok(result);
         }
@@ -58,12 +56,9 @@ namespace SQLClient_Web.Controllers
             return Ok(result);
         }
 
-        private void MapPropsToAddress(Address address, string[] args)
+        private Address PropsToAddress(string[] args)
         {
-            if (address == null)
-            {
-                return;
-            }
+            Address address = new Address();
             foreach (string argument in args)
             {
                 string propName = argument.Split("=")[0];
@@ -86,6 +81,7 @@ namespace SQLClient_Web.Controllers
                         break;
                 }
             }
+            return address;
         }
     }
 }
