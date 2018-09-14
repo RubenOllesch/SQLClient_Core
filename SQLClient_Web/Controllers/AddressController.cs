@@ -9,7 +9,7 @@ using SQLClient_Web.Repositories;
 
 namespace SQLClient_Web.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/address")]
     [ApiController]
     public class AddressController : ControllerBase
     {
