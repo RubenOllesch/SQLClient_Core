@@ -23,7 +23,7 @@ namespace SQLClient_Web.Repositories
             return instance;
         }
 
-        private AddressRepository() {}
+        //private AddressRepository() {}
 
         public int Create(Address address)
         {
@@ -122,13 +122,17 @@ namespace SQLClient_Web.Repositories
                 {
                     connection.Open();
                     var parameters = new DynamicParameters();
-                    SqlCommand cmd = new SqlCommand();
+                    SqlCommand cmd = new SqlCommand("spDeleteAddress", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
                     cmd.Parameters.AddWithValue("@Id", Id);
-                    var result = cmd.Parameters.Add("returnValue", SqlDbType.Int);
+                    SqlParameter result = new SqlParameter("returnValue", SqlDbType.Int);
+                    result.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(result);
 
                     cmd.ExecuteNonQuery();
 
-                    return result != null;
+                    return cmd.Parameters["returnValue"].Value != null;
                 }
                 catch
                 {
