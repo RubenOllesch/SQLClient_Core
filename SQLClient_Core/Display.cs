@@ -43,6 +43,28 @@ namespace SQLClient
             Console.WriteLine("Unknown command. Type 'help' for a list of commands");
         }
 
+        public static void Print(Address address)
+        {
+            if (address == null)
+            {
+                Console.WriteLine("No Results");
+                return;
+            }
+            PrintHorizontalLine('─');
+
+            List<string> rowValues = new List<string>
+            {
+                address.Country,
+                address.City,
+                address.ZIP,
+                address.Street,
+                address.CreationTime.ToString()
+            };
+            PrintRow(rowValues);
+
+            PrintHorizontalLine('─');
+        }
+
         public static void Print(Company company)
         {
             if (company == null)
@@ -51,16 +73,6 @@ namespace SQLClient
                 return;
             }
             PrintHorizontalLine('─');
-            /*
-            List<string> columnNames = new List<string>();
-            foreach (columnName in table.Columns)
-            {
-                columnNames.Add(column.ColumnName);
-            }
-            PrintRow(columnNames);
-
-            PrintHorizontalLine('-');
-            */
 
             List<string> rowValues = new List<string>
             {
@@ -72,12 +84,33 @@ namespace SQLClient
             PrintHorizontalLine('─');
         }
 
-        public static void Print(List<String> list)
+
+        public static void Print(List<Address> list)
         {
-            PrintHorizontalLine('─');
-            foreach (string item in list)
+            if (list.Count == 0)
             {
-                Console.WriteLine(item);
+                Console.WriteLine("No Results");
+                return;
+            }
+            PrintHorizontalLine('─');
+            foreach (Address address in list)
+            {
+                Print(address);
+            }
+            PrintHorizontalLine('─');
+        }
+
+        public static void Print(List<Company> list)
+        {
+            if (list.Count == 0)
+            {
+                Console.WriteLine("No Results");
+                return;
+            }
+            PrintHorizontalLine('─');
+            foreach (Company company in list)
+            {
+                Print(company);
             }
             PrintHorizontalLine('─');
         }

@@ -72,20 +72,66 @@ namespace SQLClient
                 Console.WriteLine("Please select a Table first");
                 return;
             }
+            bool readAll;
+            readAll = args[0] == "all";
             Int32.TryParse(args[0], out int Id);
             switch (currentTable)
             {
                 case "Address":
-                    addressRepository.Read(Id);
+                    if (readAll)
+                    {
+                        Display.Print(addressRepository.ReadAll());
+                    }
+                    else
+                    {
+                        Display.Print(addressRepository.Read(Id));
+                    }
                     break;
                 case "Company":
-                    Display.Print(companyRepository.Read(Id));
+                    if (readAll)
+                    {
+                        Display.Print(companyRepository.ReadAll());
+                    }
+                    else
+                    {
+                        Display.Print(companyRepository.Read(Id));
+                    }
                     break;
                 case "Department":
-                    departmentRepository.Read(Id);
+
                     break;
                 case "Employee":
-                    employeeRepository.Read(Id);
+
+                    break;
+            }
+        }
+
+        public void Delete(string[] args)
+        {
+            if (string.IsNullOrEmpty(currentTable))
+            {
+                Console.WriteLine("Please select a Table first");
+                return;
+            }
+            Int32.TryParse(args[0], out int Id);
+            bool result;
+            switch (currentTable)
+            {
+                case "Address":
+                    result = addressRepository.Delete(Id);
+                    Console.WriteLine(result ? "Successfully deleted" : "Not found");
+                    break;
+                case "Company":
+                    result = companyRepository.Delete(Id);
+                    Console.WriteLine(result ? "Successfully deleted" : "Not found");
+                    break;
+                case "Department":
+                    result = departmentRepository.Delete(Id);
+                    Console.WriteLine(result ? "Successfully deleted" : "Not found");
+                    break;
+                case "Employee":
+                    result = employeeRepository.Delete(Id);
+                    Console.WriteLine(result ? "Successfully deleted" : "Not found");
                     break;
             }
         }

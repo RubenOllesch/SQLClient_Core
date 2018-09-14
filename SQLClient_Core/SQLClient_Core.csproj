@@ -10,4 +10,8 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\dto\" />
+  </ItemGroup>
+
 </Project>

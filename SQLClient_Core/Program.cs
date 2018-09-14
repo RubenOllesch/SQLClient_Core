@@ -39,6 +39,7 @@ namespace SQLClient
                     case "update":
                         break;
                     case "delete":
+                        controller.Delete(arguments.Skip(1).ToArray());
                         break;
                     default:
                         break;
