@@ -101,11 +101,13 @@ namespace SQLClient_Web.Repositories
                     cmd.Parameters.AddWithValue("@ZIP", address.ZIP);
                     cmd.Parameters.AddWithValue("@City", address.City);
                     cmd.Parameters.AddWithValue("@Street", address.Street);
-                    var result = cmd.Parameters.Add("returnValue", SqlDbType.Int);
+                    SqlParameter result = new SqlParameter("returnValue", SqlDbType.Int);
+
+                    cmd.Parameters.Add(result).Direction = result.Direction = ParameterDirection.ReturnValue;
 
                     cmd.ExecuteNonQuery();
 
-                    return result != null;
+                    return cmd.Parameters["returnValue"].Value != DBNull.Value;
                 }
                 catch
                 {
@@ -128,7 +130,7 @@ namespace SQLClient_Web.Repositories
                     cmd.Parameters.AddWithValue("@Id", Id);
                     SqlParameter result = new SqlParameter("returnValue", SqlDbType.Int);
                     
-                    cmd.Parameters.Add(result).Direction = result.Direction = System.Data.ParameterDirection.ReturnValue;
+                    cmd.Parameters.Add(result).Direction = result.Direction = ParameterDirection.ReturnValue;
 
                     cmd.ExecuteNonQuery();
 

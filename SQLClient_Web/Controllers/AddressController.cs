@@ -34,17 +34,16 @@ namespace SQLClient_Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] string props)
+        public IActionResult Post([FromBody] Address address)
         {
-            Address address = PropsToAddress(props.Split(" "));
             var result = repository.Create(address);
             return result > 0 ? (IActionResult)StatusCode(StatusCodes.Status201Created) : Ok(false);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] string props)
+        public IActionResult Put(int id, [FromBody] Address address)
         {
-            Address address = PropsToAddress(props.Split(" "));
+            address.Id = id;
             var result = repository.Update(address);
             return Ok(result);
         }
@@ -54,34 +53,6 @@ namespace SQLClient_Web.Controllers
         {
             var result = repository.Delete(id);
             return Ok(result);
-        }
-
-        private Address PropsToAddress(string[] args)
-        {
-            Address address = new Address();
-            foreach (string argument in args)
-            {
-                string propName = argument.Split("=")[0];
-                string propValue = argument.Split("=")[1];
-                switch (propName)
-                {
-                    case "Country":
-                        address.Country = propValue;
-                        break;
-                    case "City":
-                        address.City = propValue;
-                        break;
-                    case "ZIP":
-                        address.ZIP = propValue;
-                        break;
-                    case "Street":
-                        address.Street = propValue;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            return address;
         }
     }
 }
