@@ -2,36 +2,45 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using Dapper;
 
 using SQLClient_Web.Models;
+using SQLClient_Web.Helpers;
 
 namespace SQLClient_Web.Repositories
 {
     public class AddressRepository : IRepository<Address>
     {
+        /*
         private static AddressRepository instance;
 
-        public static AddressRepository GetInstance()
+        public static AddressRepository Instance
         {
-            if (instance == null)
-            {
-                instance = new AddressRepository();
-            }
-            return instance;
+            get {
+                if (instance == null)
+                {
+                    instance = new AddressRepository();
+                }
+                return instance;
+                }
         }
 
-        //private AddressRepository() {}
+        private AddressRepository() {}
+        */
+
+        private IDataBaseContext context;
+
+        public AddressRepository(IDataBaseContext context)
+        {
+            this.context = context;
+        }
 
         public int Create(Address address)
         {
-            using (SqlConnection connection = new SqlConnection(Startup.ConnectionString))
+            using (SqlConnection connection = context.Connection)
             {
                 try
                 {
-                    connection.Open();
                     var parameters = new DynamicParameters();
                     parameters.Add("@Id", null);
                     parameters.Add("@Country", address.Country);
@@ -53,11 +62,10 @@ namespace SQLClient_Web.Repositories
 
         public Address Read(int Id)
         {
-            using (SqlConnection connection = new SqlConnection(Startup.ConnectionString))
+            using (SqlConnection connection = context.Connection)
             {
                 try
                 {
-                    connection.Open();
                     var parameters = new DynamicParameters();
                     parameters.Add("@Id", Id);
                     return connection.QuerySingleOrDefault<Address>("SELECT Id, Country, City, ZIP, Street, CreationTime FROM viAddress WHERE Id=@Id", parameters);
@@ -71,11 +79,10 @@ namespace SQLClient_Web.Repositories
 
         public IEnumerable<Address> ReadAll()
         {
-            using (SqlConnection connection = new SqlConnection(Startup.ConnectionString))
+            using (SqlConnection connection = context.Connection)
             {
                 try
                 {
-                    connection.Open();
                     return connection.Query<Address>("SELECT Id, Country, City, ZIP, Street, CreationTime FROM viAddress");
                 }
                 catch
@@ -85,29 +92,26 @@ namespace SQLClient_Web.Repositories
             }
         }
 
-        public bool Update(Address address)
+        public int Update(Address address)
         {
-            using (SqlConnection connection = new SqlConnection(Startup.ConnectionString))
+            using (SqlConnection connection = context.Connection)
             {
                 try
                 {
-                    connection.Open();
                     var parameters = new DynamicParameters();
                     SqlCommand cmd = new SqlCommand("spCrReAddress", connection);
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.AddWithValue("@Id", address.Id);
-                    cmd.Parameters.AddWithValue("@Country", address.Country);
-                    cmd.Parameters.AddWithValue("@ZIP", address.ZIP);
-                    cmd.Parameters.AddWithValue("@City", address.City);
-                    cmd.Parameters.AddWithValue("@Street", address.Street);
-                    SqlParameter result = new SqlParameter("returnValue", SqlDbType.Int);
+                    parameters.Add("@Id", address.Id);
+                    parameters.Add("@Country", address.Country);
+                    parameters.Add("@ZIP", address.ZIP);
+                    parameters.Add("@City", address.City);
+                    parameters.Add("@Street", address.Street);
+                    parameters.Add("returnValue", null, DbType.Int32, ParameterDirection.ReturnValue);
 
-                    cmd.Parameters.Add(result).Direction = result.Direction = ParameterDirection.ReturnValue;
+                    connection.Execute("spCrReAddress", parameters, commandType: CommandType.StoredProcedure);
 
-                    cmd.ExecuteNonQuery();
-
-                    return cmd.Parameters["returnValue"].Value != DBNull.Value;
+                    return parameters.Get<Int32>("returnValue");
                 }
                 catch
                 {
@@ -118,23 +122,20 @@ namespace SQLClient_Web.Repositories
 
         public bool Delete(int Id)
         {
-            using(SqlConnection connection = new SqlConnection(Startup.ConnectionString))
+            using(SqlConnection connection = context.Connection)
             {
                 try
                 {
-                    connection.Open();
                     var parameters = new DynamicParameters();
                     SqlCommand cmd = new SqlCommand("spDeleteAddress", connection);
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.AddWithValue("@Id", Id);
-                    SqlParameter result = new SqlParameter("returnValue", SqlDbType.Int);
-                    
-                    cmd.Parameters.Add(result).Direction = result.Direction = ParameterDirection.ReturnValue;
+                    parameters.Add("@Id", Id);
+                    parameters.Add("returnValue", null, DbType.Int32, ParameterDirection.ReturnValue);
 
-                    cmd.ExecuteNonQuery();
+                    connection.Execute("spDeleteAddress", parameters, commandType: CommandType.StoredProcedure);
 
-                    return cmd.Parameters["returnValue"].Value != DBNull.Value;
+                    return parameters.Get<Int32>("returnValue") > 0;
                 }
                 catch
                 {

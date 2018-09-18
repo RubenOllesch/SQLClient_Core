@@ -37,7 +37,7 @@ namespace SQLClient_Web.Controllers
         public IActionResult Post([FromBody] Address address)
         {
             var result = repository.Create(address);
-            return result > 0 ? (IActionResult)StatusCode(StatusCodes.Status201Created) : Ok(false);
+            return result > 0 ? Ok(result) : Ok(false);
         }
 
         [HttpPut("{id}")]

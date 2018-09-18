@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+
 using SQLClient_Web.Models;
 using SQLClient_Web.Repositories;
+using SQLClient_Web.Helpers;
 
 namespace SQLClient_Web
 {
@@ -21,7 +16,6 @@ namespace SQLClient_Web
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            Startup.ConnectionString = Configuration.GetValue<string>("ConnectionString");
         }
 
         public IConfiguration Configuration { get; }
@@ -31,7 +25,10 @@ namespace SQLClient_Web
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddTransient<IRepository<Address>, AddressRepository>();
+            services.Configure<DataBaseSettings>(Configuration.GetSection("ConnectionStrings"));
+
+            services.AddSingleton<IDataBaseContext, DataBaseContext>();
+            services.AddScoped<IRepository<Address>, AddressRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

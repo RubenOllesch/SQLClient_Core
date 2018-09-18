@@ -7,7 +7,7 @@ namespace SQLClient_Web.Repositories
         int Create(T obj);
         T Read(int id);
         IEnumerable<T> ReadAll();
-        bool Update(T obj);
+        int Update(T obj);
         bool Delete(int id);
     }
 }
