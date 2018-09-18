@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
 using SQLClient_Web.Models;
 using System;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SQLClient_Web.Helpers
 {
@@ -14,10 +16,29 @@ namespace SQLClient_Web.Helpers
         }
         public bool IsAuthenticated(string auth)
         {
-            string base64data = auth.Split(" ")[1];
+            if (new Regex("Basic*").IsMatch(auth))
+            {
+                string base64data = auth.Split(" ")[1];
+                return IsAuthenticatedBasic(base64data);
+            }
+            else
+            {
+                throw new AuthorizationException<AuthorizationError>(AuthorizationError.INVALID_AUTHORIZATION_TYPE);
+            }
+        }
+
+        private bool IsAuthenticatedBasic(string base64data)
+        {
             string credentials = Base64Decode(base64data);
+
+            if (credentials.Count(x => x == ':') != 1)
+            {
+                throw new AuthorizationException<AuthorizationError>(AuthorizationError.INVALID_AUTHORIZATION_HEADER);
+            }
+
             string userName = credentials.Split(":")[0];
             string password = credentials.Split(":")[1];
+
             return Array.Exists(users, user => user.UserName == userName && user.Password == password);
         }
 
