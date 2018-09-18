@@ -26,8 +26,11 @@ namespace SQLClient_Web
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.Configure<DataBaseSettings>(Configuration.GetSection("ConnectionStrings"));
+            services.Configure<DataBaseSettings>(Configuration.GetSection("Users"));
 
             services.AddSingleton<IDataBaseContext, DataBaseContext>();
+            services.AddSingleton<IAuthenticator, Authenticator>();
+
             services.AddScoped<IRepository<Address>, AddressRepository>();
         }
 
