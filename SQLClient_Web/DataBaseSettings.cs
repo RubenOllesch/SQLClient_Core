@@ -6,5 +6,6 @@ namespace SQLClient_Web
     {
         public string ConnectionString { get; set; }
         public User[] Credentials { get; set; }
+        public string JWTSecret { get; set; }
     }
 }

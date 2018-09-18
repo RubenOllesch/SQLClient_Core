@@ -11,6 +11,7 @@ using SQLClient_Web.Repositories;
 namespace SQLClient_Web.Controllers
 {
     [Route("address")]
+    [Produces("application/json")]
     [ApiController]
     public class AddressController : ControllerBase
     {
