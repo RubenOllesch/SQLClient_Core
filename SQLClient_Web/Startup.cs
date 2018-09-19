@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
+using TobitLogger.Core;
+using TobitLogger.Middleware;
 
 using SQLClient_Web.Models;
 using SQLClient_Web.Repositories;
 using SQLClient_Web.Helpers;
-using Microsoft.AspNetCore.Http;
-using TobitLogger.Core;
 
 namespace SQLClient_Web
 {
