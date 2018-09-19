@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 using TobitLogger.Core;
 using TobitLogger.Middleware;
+using TobitLogger.Logstash;
 
 using SQLClient_Web.Models;
 using SQLClient_Web.Repositories;
@@ -17,7 +18,6 @@ namespace SQLClient_Web
 {
     public class Startup
     {
-        public static string ConnectionString;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -33,7 +33,7 @@ namespace SQLClient_Web
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ILogContextProvider, RequestGuidContextProvider>();
 
-            services.Configure<DataBaseSettings>(Configuration.GetSection("ConnectionStrings"));
+            services.Configure<DataBaseSettings>(Configuration.GetSection("Connection"));
             services.Configure<DataBaseSettings>(Configuration.GetSection("Security"));
 
             services.AddSingleton<IDataBaseContext, DataBaseContext>();
@@ -45,6 +45,7 @@ namespace SQLClient_Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ILogContextProvider logContextProvider)
         {
+            loggerFactory.AddLogstashLogger(Configuration.GetSection("Logger"), logContextProvider: logContextProvider);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

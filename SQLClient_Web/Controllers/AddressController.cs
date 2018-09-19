@@ -17,7 +17,7 @@ namespace SQLClient_Web.Controllers
         private readonly ILogger<AddressController> _logger;
         private IRepository<Address> _repository;
         private IAuthenticator _authenticator;
-        public AddressController(ILoggerFactory loggerFactory, IRepository<Address> repository,IAuthenticator authenticator)
+        public AddressController(ILoggerFactory loggerFactory, IRepository<Address> repository, IAuthenticator authenticator)
         {
             _logger = loggerFactory.CreateLogger<AddressController>();
             _repository = repository;
@@ -32,7 +32,7 @@ namespace SQLClient_Web.Controllers
                 _logger.LogInformation("Unauthenticated Access");
                 return Unauthorized();
             }
-            _logger.LogInformation("Get");
+            _logger.LogInformation("GetAddress");
 
             var result = _repository.ReadAll();
             return result.Any() ? Ok(result) : (IActionResult)StatusCode(StatusCodes.Status204NoContent);
