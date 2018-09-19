@@ -3,6 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
+using TobitLogger.Core;
+using TobitLogger.Middleware;
 
 using SQLClient_Web.Models;
 using SQLClient_Web.Repositories;
@@ -25,6 +30,9 @@ namespace SQLClient_Web
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<ILogContextProvider, RequestGuidContextProvider>();
+
             services.Configure<DataBaseSettings>(Configuration.GetSection("ConnectionStrings"));
             services.Configure<DataBaseSettings>(Configuration.GetSection("Security"));
 
@@ -35,7 +43,7 @@ namespace SQLClient_Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ILogContextProvider logContextProvider)
         {
             if (env.IsDevelopment())
             {
@@ -45,8 +53,9 @@ namespace SQLClient_Web
             {
                 app.UseHsts();
             }
-
+            app.UseRequestLogging();
             app.UseHttpsRedirection();
+
             app.UseMvc();
         }
     }
